@@ -53,7 +53,7 @@ const client = {
   mode: process.env.NODE_ENV,
   target: "web",
   watch: true,
-  entry: [path.join(__dirname, "src", "public", "index.tsx")],
+  entry: [path.join(__dirname, "src", "app", "index.tsx")],
   output: {
     path: path.resolve(__dirname, "dist", "public"),
     filename: "[name].js",

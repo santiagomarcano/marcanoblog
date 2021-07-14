@@ -1,7 +1,7 @@
 import ReactDOMServer from "react-dom/server";
 import express from "express";
 import { ServerLocation } from "@reach/router"
-import App from "./public/components/App";
+import App from "./app/components/App";
 import fs from 'fs';
 const app: express.Application = express();
 const port: number = 3000;
