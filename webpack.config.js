@@ -10,7 +10,7 @@ const { DefinePlugin } = require("webpack");
 
 const server = {
   mode: process.env.NODE_ENV,
-  watch: true,
+  watch: process.env.NODE_ENV === "development",
   target: "node",
   entry: [path.join(__dirname, "src", "server.tsx")],
   output: {
@@ -60,7 +60,7 @@ const server = {
 const client = {
   mode: process.env.NODE_ENV,
   target: "web",
-  watch: true,
+  watch: process.env.NODE_ENV === "development",
   entry: [path.join(__dirname, "src", "app", "index.tsx")],
   output: {
     path: path.resolve(__dirname, "dist", "public"),
@@ -77,7 +77,7 @@ const client = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
     ],
   },

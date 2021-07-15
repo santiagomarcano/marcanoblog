@@ -20,7 +20,7 @@ export default function App() {
         <Link to="/">Home</Link>
         <Link to="about">Dashboard</Link>
       </nav>
-      <h2>Welcome!</h2>
+      <h2 className="text-gray-50">conoha!</h2>
       <Router>
         <Home path="/" />
         <About path="/about" />
