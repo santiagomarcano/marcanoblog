@@ -6,11 +6,11 @@ interface HomeProps {
 }
 
 function Home({ path }: HomeProps): React.ReactElement {
-  return <h1>Home!</h1>;
+  return <h1>Home</h1>;
 }
 
 function About({ path }: HomeProps): React.ReactElement {
-  return <h1>About!</h1>;
+  return <h1>About</h1>;
 }
 
 export default function App() {

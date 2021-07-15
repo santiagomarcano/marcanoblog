@@ -3,6 +3,10 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const NodemonPlugin = require("nodemon-webpack-plugin");
+const { HotReloadPlugin } = require("./HotReloadPlugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const { DefinePlugin } = require("webpack");
 
 const server = {
   mode: process.env.NODE_ENV,
@@ -23,10 +27,10 @@ const server = {
           loader: "ts-loader",
         },
       },
-      // {
-      //   test: /\.css$/,
-      //   use: [MiniCssExtractPlugin.loader, "css-loader"],
-      // },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
     ],
   },
   resolve: {
@@ -35,18 +39,22 @@ const server = {
   plugins: [
     new NodemonPlugin({
       script: path.resolve(__dirname, "dist", "main.js"),
-      watch: path.resolve(__dirname, "src"),
     }),
-    // new MiniCssExtractPlugin({
-    //   filename: "assets/css/[name].css",
-    // }),
+    new MiniCssExtractPlugin({
+      filename: "assets/css/[name].css",
+    }),
+    new HotReloadPlugin({
+      // Different port to express server
+      port: Number(process.env.PORT) + 1,
+    }),
+    new DefinePlugin({
+      PORT: process.env.PORT,
+      ENV: process.env.NODE_ENV,
+      // process: process,
+    }),
+    new CleanWebpackPlugin(),
   ],
-  stats: "errors-only",
-  // devServer: {
-  //   compress: true,
-  //   historyApiFallback: true,
-  //   overlay: true,
-  // },
+  stats: "minimal",
 };
 
 const client = {
@@ -67,25 +75,33 @@ const client = {
           loader: "ts-loader",
         },
       },
-      // {
-      //   test: /\.css$/,
-      //   use: [MiniCssExtractPlugin.loader, "css-loader"],
-      // },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
     ],
   },
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   plugins: [
-    // new NodemonPlugin({
-    //   script: path.resolve(__dirname, "dist", "main.js"),
-    //   watch: path.resolve(__dirname, "src"),
-    // }),
     new MiniCssExtractPlugin({
       filename: "assets/css/[name].css",
     }),
+    new DefinePlugin({
+      ...process.env,
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, "public"),
+          to: path.join(__dirname, "dist", "public"),
+        },
+      ],
+    }),
+    new CleanWebpackPlugin(),
   ],
-  stats: "errors-only",
+  stats: "minimal",
 };
 
 module.exports = [server, client];
