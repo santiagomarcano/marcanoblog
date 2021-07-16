@@ -42,10 +42,6 @@ const server = {
     new MiniCssExtractPlugin({
       filename: "../css/[name].css",
     }),
-    new DefinePlugin({
-      PORT: process.env.PORT,
-      ENV: process.env.NODE_ENV,
-    }),
     new CopyPlugin({
       patterns: [
         {
