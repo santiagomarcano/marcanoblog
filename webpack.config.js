@@ -47,9 +47,9 @@ const server = {
         {
           from: path.join(__dirname, ".env"),
           to: path.join(__dirname, "dist"),
-          globOptions: {
-            ignore: ["**/index.html"],
-          },
+          // globOptions: {
+          //   ignore: ["**/index.html"],
+          // },
         },
       ],
     }),
