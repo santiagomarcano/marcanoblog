@@ -2,11 +2,13 @@ require("dotenv").config();
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const NodemonPlugin = require("nodemon-webpack-plugin");
+const { DefinePlugin } = require("webpack");
 const { HotReloadPlugin } = require("./HotReloadPlugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const NodemonPlugin = require("nodemon-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-const { DefinePlugin } = require("webpack");
+
+console.log(`[+] ENV ${process.env.NODE_ENV}`, "| epoch: ", Date.now());
 
 const server = {
   mode: process.env.NODE_ENV,
@@ -37,20 +39,23 @@ const server = {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   plugins: [
-    new NodemonPlugin({
-      script: path.resolve(__dirname, "dist", "main.js"),
-    }),
     new MiniCssExtractPlugin({
-      filename: "assets/css/[name].css",
-    }),
-    new HotReloadPlugin({
-      // Different port to express server
-      port: Number(process.env.PORT) + 1,
+      filename: "../css/[name].css",
     }),
     new DefinePlugin({
       PORT: process.env.PORT,
       ENV: process.env.NODE_ENV,
-      // process: process,
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, ".env"),
+          to: path.join(__dirname, "dist"),
+          globOptions: {
+            ignore: ["**/index.html"],
+          },
+        },
+      ],
     }),
     new CleanWebpackPlugin(),
   ],
@@ -63,7 +68,7 @@ const client = {
   watch: process.env.NODE_ENV === "development",
   entry: [path.join(__dirname, "src", "app", "index.tsx")],
   output: {
-    path: path.resolve(__dirname, "dist", "public"),
+    path: path.resolve(__dirname, "dist", "public", "assets", "js"),
     filename: "[name].js",
   },
   module: {
@@ -86,7 +91,7 @@ const client = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "assets/css/[name].css",
+      filename: "../css/[name].css",
     }),
     new DefinePlugin({
       ...process.env,
@@ -96,6 +101,9 @@ const client = {
         {
           from: path.join(__dirname, "public"),
           to: path.join(__dirname, "dist", "public"),
+          globOptions: {
+            ignore: ["**/index.html"],
+          },
         },
       ],
     }),
@@ -103,5 +111,18 @@ const client = {
   ],
   stats: "minimal",
 };
+
+if (process.env.NODE_ENV === "development") {
+  client.plugins = [
+    ...client.plugins,
+    new NodemonPlugin({
+      script: path.resolve(__dirname, "dist", "main.js"),
+    }),
+    new HotReloadPlugin({
+      // Different port to express server
+      port: Number(process.env.PORT) + 1,
+    }),
+  ];
+}
 
 module.exports = [server, client];

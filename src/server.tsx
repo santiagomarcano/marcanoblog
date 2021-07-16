@@ -1,3 +1,4 @@
+require("dotenv").config();
 import ReactDOMServer from "react-dom/server";
 import express, { Application, Request, Response } from "express";
 import { ServerLocation } from "@reach/router";
@@ -9,7 +10,7 @@ import { get, set } from "./redis";
 
 const app: Application = express();
 
-app.use("/", express.static("dist"));
+app.use(express.static(path.join("dist", "public")));
 app.use(
   injectHRClient({
     port: Number(process.env.PORT) + 1,
@@ -28,7 +29,7 @@ app.get("*", async (req: Request, res: Response) => {
   );
   try {
     // Cache policy for production
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" && !req.params.ts) {
       const page = await get(req.url);
       if (page) {
         return res.send(page);
@@ -44,6 +45,7 @@ app.get("*", async (req: Request, res: Response) => {
     res.send(html);
     // Cache policy for production
     if (process.env.NODE_ENV === "production") {
+      // One day cache per page
       await set({ key: req.url, value: html, expire: 60 * 60 * 24 });
     }
   } catch (err) {
