@@ -2,13 +2,28 @@ import React, { ComponentType, ReactElement, Suspense } from "react";
 import { Router, Link } from "@reach/router";
 import Loadable, { LoadableComponent } from "react-loadable";
 import LoadableVisibility from "react-loadable-visibility/react-loadable";
+import Slides from "./Slides";
 
 function Load() {
   return <div>Loading</div>;
 }
 
 interface HomeProps {
-  path: string;
+  path?: string;
+}
+
+function Foo({ path }: HomeProps): ReactElement {
+  // const Lazy: React.ComponentType<unknown> & Loadable.LoadableComponent =
+  //   Loadable({
+  //     loader: () => import("./Slides"),
+  //     loading: Load,
+  //   });
+  return (
+    <>
+      <Slides id="1" />
+      <Slides id="2" />
+    </>
+  );
 }
 
 function Home({ path }: HomeProps): ReactElement {
@@ -24,7 +39,6 @@ function Home({ path }: HomeProps): ReactElement {
   //   });
   return (
     <div>
-      Home!
       {/* <Lazy1></Lazy1>
       <div style={{ height: 5000 }}></div>
       {/* With Visibility
@@ -40,7 +54,9 @@ function About({ path }: HomeProps): React.ReactElement {
 export default function App() {
   return (
     <div>
-      <nav>
+      <Foo />
+
+      {/* <nav>
         <Link to="/">Home</Link>
         <Link to="about">Dashboard</Link>
       </nav>
@@ -48,7 +64,7 @@ export default function App() {
       <Router>
         <Home path="/" />
         <About path="/about" />
-      </Router>
+      </Router> */}
     </div>
   );
 }

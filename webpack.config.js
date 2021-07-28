@@ -38,6 +38,11 @@ const server = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: "all",
+  //   },
+  // },
   plugins: [
     new MiniCssExtractPlugin({
       filename: "../css/[name].css",
@@ -47,9 +52,6 @@ const server = {
         {
           from: path.join(__dirname, ".env"),
           to: path.join(__dirname, "dist"),
-          // globOptions: {
-          //   ignore: ["**/index.html"],
-          // },
         },
       ],
     }),
@@ -67,6 +69,11 @@ const client = {
     path: path.resolve(__dirname, "dist", "public", "assets", "js"),
     filename: "[name].js",
   },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: "all",
+  //   },
+  // },
   module: {
     rules: [
       {
@@ -101,11 +108,26 @@ const client = {
             ignore: ["**/index.html"],
           },
         },
+        {
+          from: path.join(__dirname, "node_modules", "reveal.js", "dist"),
+          to: path.join(__dirname, "dist", "public", "assets", "reveal"),
+        },
+        {
+          from: path.join(__dirname, "node_modules", "reveal.js", "plugin"),
+          to: path.join(
+            __dirname,
+            "dist",
+            "public",
+            "assets",
+            "reveal",
+            "plugin"
+          ),
+        },
       ],
     }),
     new CleanWebpackPlugin(),
   ],
-  stats: "minimal",
+  // stats: "minimal",
 };
 
 if (process.env.NODE_ENV === "development") {
